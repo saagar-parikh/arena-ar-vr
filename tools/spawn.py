@@ -6,17 +6,6 @@ load_dotenv()
 scene = Scene(host="arenaxr.org", namespace=os.getenv("NAMESPACE"), scene=os.getenv("SCENE_NAME"))
 
 
-def user_join_callback(scene, cam, msg):
-
-    cam.update_attributes(
-        # headModelPath="/store/users/saagardp/lab1.glb",
-        headModelPath="/static/models/avatars/Duck.glb",
-    )
-    scene.update_object(cam)
-    print("User joined and cam updated")
-
-scene.user_join_callback = user_join_callback
-
 class Furniture:
     def __init__(self, obj_id, name, img_path, obj_path, description):
         self.obj_id = obj_id
