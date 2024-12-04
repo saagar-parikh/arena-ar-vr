@@ -102,7 +102,7 @@ def move_box():
             new_rotation = Utils.matrix3_to_quat(new_pose[:3,:3])
             new_rotation = (new_rotation[3], new_rotation[0], new_rotation[1], new_rotation[2])
 
-            obj.arena_obj.update_attributes(position=new_position, scale=obj.grabbed_scale)#, rotation=new_rotation)
+            obj.arena_obj.update_attributes(position=new_position, scale=obj.grabbed_scale, rotation=new_rotation)
             scene.update_object(obj.arena_obj)
             print("object position updated to", new_position)
 
