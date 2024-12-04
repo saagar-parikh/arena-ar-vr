@@ -5,6 +5,18 @@ load_dotenv()
 
 scene = Scene(host="arenaxr.org", namespace=os.getenv("NAMESPACE"), scene=os.getenv("SCENE_NAME"))
 
+
+def user_join_callback(scene, cam, msg):
+
+    cam.update_attributes(
+        # headModelPath="/store/users/saagardp/lab1.glb",
+        headModelPath="/static/models/avatars/Duck.glb",
+    )
+    scene.update_object(cam)
+    print("User joined and cam updated")
+
+scene.user_join_callback = user_join_callback
+
 class Furniture:
     def __init__(self, obj_id, name, img_path, obj_path, description):
         self.obj_id = obj_id
@@ -51,22 +63,22 @@ def spawn_obj(obj_name):
     obj = furniture[obj_name]
     obj_count = obj.count
 
-    def del_button_handler(scene, evt, msg):
-        if evt.type == "mousedown":
-            scene.delete_object(scene_obj)
-            # scene.delete_object(del_button)
-            print(f"Object deleted: {obj.obj_id}-{obj_count}")
 
     scene_obj = GLTF(
         object_id=f"{obj.obj_id}-{obj.count}",
         parent="main",
         position=Position(12.5, 1, -2),
-        dynamic_body=True,
+        # dynamic_body=True,
+        clickable=True,
         url=obj.obj_path,
     )
     scene.add_object(scene_obj)
     print(f"Object added: {obj.obj_id}-{obj.count}")
 
+    def del_button_handler(scene, evt, msg):
+        if evt.type == "mousedown":
+            scene.delete_object(scene_obj)
+            print(f"Object deleted: {obj.obj_id}-{obj_count}")
 
     # Delete button
     del_button = Box(
