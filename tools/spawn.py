@@ -9,6 +9,17 @@ load_dotenv()
 
 scene = Scene(host="arenaxr.org", namespace=os.getenv("NAMESPACE"), scene=os.getenv("SCENE_NAME"))
 
+# Utility function
+def get_main_pos_rotation():
+    try:
+        main = scene.get_persisted_obj("main")
+        pos = main.data.position
+        rotation = main.data.rotation
+    except:
+        pos = (0, 0, 0)
+        rotation = (0, 0, 0, 0)
+    return pos, rotation
+main_pos, main_rot = get_main_pos_rotation()
 
 class FurnitureType:
     def __init__(self, type_id, name, img_path, obj_path, description):
@@ -46,7 +57,8 @@ class GrabObject:
                     self.grabbing = True
                     hand_pose = pose_matrix(self.grabber.data.position, self.grabber.data.rotation)
                     # print(self.arena_obj.data.position, self.arena_obj.data.rotation)
-                    child_pose = pose_matrix(self.arena_obj.data.position, self.arena_obj.data.rotation)
+                    child_pose_relative_to_main = pose_matrix(self.arena_obj.data.position, self.arena_obj.data.rotation)
+                    child_pose = get_world_pose_when_parented(pose_matrix(main_pos, main_rot), child_pose_relative_to_main)
                     self.child_pose_relative_to_parent = get_relative_pose_to_parent(hand_pose, child_pose)
 
         elif evt.type == "mouseup":
@@ -105,14 +117,11 @@ def spawn_obj(obj_name):
     object_id = f"{obj.type_id}-{obj.count}"
 
     grabObj = GrabObject(obj_id=object_id, obj_type=obj)
-
     scene_obj = GLTF(
         object_id=object_id,
-        # parent="main",
-        # position=Position(12.5, 1, -2),
-        # rotation=(0, 0, 0, 0),
-        position=Position(5.25, 2.327, -12.23),
-        rotation=(0, -0.445, 0, -0.896),
+        parent="main",
+        position=Position(12.5, 1, -2),
+        rotation=(0, 0, 0, 0),
         # dynamic_body=True,
         clickable=True,
         url=obj.obj_path,
@@ -170,7 +179,8 @@ def move_box():
     for id, obj in furniture.items():
         if obj.grabber is not None and obj.child_pose_relative_to_parent is not None and obj.grabbing:
             hand_pose = pose_matrix(obj.grabber.data.position, obj.grabber.data.rotation)
-            new_pose = get_world_pose_when_parented(hand_pose, obj.child_pose_relative_to_parent)
+            new_pose_abs = get_world_pose_when_parented(hand_pose, obj.child_pose_relative_to_parent)
+            new_pose = get_relative_pose_to_parent(pose_matrix(main_pos, main_rot), new_pose_abs)
 
             new_position = (new_pose[0,3], new_pose[1,3], new_pose[2,3])
             new_rotation = Utils.matrix3_to_quat(new_pose[:3,:3])
