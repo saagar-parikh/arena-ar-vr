@@ -114,7 +114,7 @@ def setup():
         global obj_name
         if evt.type == "buttonClick":
             print(f"Button clicked: {evt.data.buttonName}")
-            if evt.data.buttonName in ["Table 1", "Table 2", "Table 3"]:
+            if evt.data.buttonName in furnitureType.keys():
                 scene.update_object(button_panel, buttons=second_buttonset, 
                                     title=f"{evt.data.buttonName}")
                 obj_name = evt.data.buttonName
@@ -126,7 +126,7 @@ def setup():
             elif evt.data.buttonName == "Add":
                 spawn_obj(obj_name)
 
-    first_buttonset = [Button(name="Table 1"), Button(name="Table 2"), Button(name="Table 3")]
+    first_buttonset = [Button(name=s) for s in furnitureType.keys()]
     second_buttonset = [Button(name="Back"), Button(name="View"), Button(name="Add")]
 
     button_panel = ButtonPanel(
