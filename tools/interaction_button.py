@@ -47,8 +47,8 @@ def make_display_card(string):
         # print("Object not found")
         display_prompt = Prompt(
             object_id="display_prompt",
-            title=string,
-            description="This is a prompt with a description.",
+            title="Label",
+            description=string,
             buttons=["OK"],
             position=Position(0, 0, 0.5),     # TODO: Relative to parent
             look_at="#my-camera",
@@ -65,17 +65,28 @@ print(main_pos, main_rot)
 
 furnitureType = {}
 furnitureType["Table 1"] = FurnitureType(type_id="table-1", name="Table 1", 
-                                 img_path="/store/users/saagardp/img.jpg", 
-                                 obj_path="/store/users/saagardp/lab1.glb",
-                                 description="Table 1 description placeholder")
+                                 img_path="/store/users/saagardp/table1.jpg", 
+                                 obj_path="/store/users/saagardp/table1.obj",
+                                 mtl_path="/store/users/saagardp/table1.mtl",
+                                 scale=0.01,
+                                 description="Add a touch of rustic elegance to your home with this beautifully crafted wooden table. Featuring a distressed wooden surface and sturdy black legs, this table combines durability with vintage charm. Perfect for both dining and decorative purposes, its timeless design fits seamlessly into modern, farmhouse, or industrial decor. A statement piece for any room, designed to bring warmth and character to your space.",
+                                 desc_title="Rustic Charm Wooden Table",                                 
+                                 )
 furnitureType["Table 2"] = FurnitureType(type_id="table-2", name="Table 2", 
-                                 img_path="/store/users/saagardp/img.jpg", 
-                                 obj_path="/store/users/aadeshkd/table2.gltf",
-                                 description="Table 2 description placeholder")
+                                 img_path="/store/users/saagardp/table2.jpg", 
+                                 obj_path="/store/users/saagardp/table2.obj",
+                                 mtl_path="/store/users/saagardp/table2.mtl",
+                                 description="Elevate your living room with this contemporary coffee table, blending sleek functionality with bold design. Its smooth, dark wood finish and contrasting white drawers create a striking minimalist aesthetic. Featuring ample storage space and an open shelf for easy access to books or decor, this table is perfect for modern homes. The clean lines and subtle curves make it an ideal centerpiece, bringing sophistication and practicality to any space.",
+                                 desc_title="Sleek Modern Coffee Table",
+                                 )
 furnitureType["Table 3"] = FurnitureType(type_id="table-3", name="Table 3", 
-                                 img_path="/store/users/saagardp/img.jpg", 
-                                 obj_path="/store/users/aadeshkd/table3.gltf",
-                                 description="Table 3 description placeholder")
+                                 img_path="/store/users/saagardp/table3.jpg", 
+                                 obj_path="/store/users/saagardp/table3.obj",
+                                 mtl_path="/store/users/saagardp/table3.mtl",
+                                 scale=0.03,
+                                 description="Bring timeless elegance to your space with this stunning mid-century modern sideboard. Crafted from rich wood with a natural finish, it features clean lines and tapered legs that exude classic sophistication. With spacious drawers, open shelves, and a closed cabinet, it offers versatile storage for your living or dining area. Perfect for showcasing decor or keeping essentials organized, this piece combines style and functionality in perfect harmony.",
+                                 desc_title="Mid-Century Modern Sideboard",
+                                 )
 
 furniture = {}
 
@@ -85,14 +96,16 @@ def spawn_obj(obj_name):
     object_id = f"{obj.type_id}-{obj.count}"
 
     grabObj = GrabObject(obj_id=object_id, obj_type=obj, main_pos=main_pos, main_rot=main_rot)
-    scene_obj = GLTF(
+    scene_obj = ObjModel(
         object_id=object_id,
         parent="main",
-        position=Position(5, 1, -3.5),
+        position=Position(-2, -1, 1), # TODO: Relative to button panel
         rotation=(0, 0, 0, 0),
+        scale=(obj.scale, obj.scale, obj.scale),
         # dynamic_body=True,
         clickable=True,
-        url=obj.obj_path,
+        obj=obj.obj_path,
+        mtl=obj.mtl_path,
         evt_handler=grabObj.box_click,
     )
     grabObj.arena_obj = scene_obj
@@ -112,9 +125,9 @@ def spawn_obj(obj_name):
         object_id=f"{object_id}-del",
         parent=object_id,
         position=Position(0.1, 0.1, 0.1),
-        height=0.1,
-        width=0.1,
-        depth=0.1,
+        height=0.1/obj.scale,
+        width=0.1/obj.scale,
+        depth=0.1/obj.scale,
         clickable=True,
         evt_handler=del_button_handler,
     )
@@ -129,7 +142,7 @@ def make_view_card(obj_name):
     # except:
     card = Card(
         object_id=f"{obj.type_id}-card",
-        title=obj_name,
+        title=obj.desc_title,
         body=obj.description,
         bodyAlign="left",
         imgDirection="left",
@@ -282,11 +295,13 @@ def setup_scene():
                 make_tex_input_iso()
             elif evt.data.buttonName == "FURNITURE":  # switch to second button set
                 print("Furniture button clicked!")
-                scene.update_object(button_panel, buttons=second_buttonset)
+                button_panel.update_attributes(buttons=second_buttonset, title="Choose a table you want to add")
+                scene.update_object(button_panel)
             elif evt.data.buttonName == "HOME":  # Reset to Home state
                 print("Home button clicked!")
                 # Restore initial button set
-                scene.update_object(button_panel, buttons=first_buttonset)
+                button_panel.update_attributes(buttons=first_buttonset, title="Interaction Modes")
+                scene.update_object(button_panel)
                 print("Exiting all ongoing events.")
                 objs = scene.get_persisted_objs()
                 for obj_id, obj in objs.items():
@@ -313,8 +328,9 @@ def setup_scene():
                         print("Deleted my_iso.")
                     except Exception as e:
                         print(f"Failed to delete my_iso: {e}")
-            elif evt.data.buttonName == "Home":      # compare buttonIndex, switch 1st set
-                scene.update_object(button_panel, buttons=first_buttonset)
+            elif evt.data.buttonName == "Home":      
+                button_panel.update_attributes(buttons=first_buttonset, title="Interaction Modes")
+                scene.update_object(button_panel)
             elif evt.data.buttonName in furnitureType.keys():
                 scene.update_object(button_panel, buttons=third_buttonset, 
                                     title=f"{evt.data.buttonName}")
@@ -334,7 +350,8 @@ def setup_scene():
         buttons=first_buttonset,
         vertical=True,
         font="Roboto-Mono",
-        position=Position(4, 0.5, -4.5),
+        position=Position(-2, 0.5, 0),
+        ###4, 0.5, -4.5
         parent="main",
         evt_handler=button_handler,
         look_at="#my-camera",

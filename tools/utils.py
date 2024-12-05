@@ -2,12 +2,15 @@ from arena import *
 import numpy as np
 
 class FurnitureType:
-    def __init__(self, type_id, name, img_path, obj_path, description):
+    def __init__(self, type_id, name, img_path, obj_path, description, mtl_path=None, scale=1, desc_title="Title"):
         self.type_id = type_id
         self.name = name
         self.img_path = img_path
         self.obj_path = obj_path
+        self.mtl_path = mtl_path
         self.description = description
+        self.desc_title = desc_title
+        self.scale = scale
         self.count = 0
 
 class GrabObject:
