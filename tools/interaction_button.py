@@ -100,7 +100,7 @@ def spawn_obj(obj_name):
     scene_obj = ObjModel(
         object_id=object_id,
         parent="main",
-        position=Position(-2, -1, 1), # TODO: Relative to button panel
+        position=Position(-3.4, 0.5, -1.7), # TODO: Relative to button panel
         rotation=(0, 0, 0, 0),
         scale=(obj.scale, obj.scale, obj.scale),
         # dynamic_body=True,
@@ -125,7 +125,7 @@ def spawn_obj(obj_name):
     del_button = Box(
         object_id=f"{object_id}-del",
         parent=object_id,
-        position=Position(0.1, 0.1, 0.1),
+        position=Position(0.1, 1.1, 0.1),
         height=0.1/obj.scale,
         width=0.1/obj.scale,
         depth=0.1/obj.scale,
@@ -351,7 +351,7 @@ def setup_scene():
         buttons=first_buttonset,
         vertical=True,
         font="Roboto-Mono",
-        position=Position(-2, 0.5, 0),
+        position=Position(-3.4, 1.163, -2.748),
         ###4, 0.5, -4.5
         parent="main",
         evt_handler=button_handler,
@@ -362,4 +362,4 @@ def setup_scene():
 
 scene.run_tasks()
 
-#    position=Position(1.5, 0.5, 0.5),
+#  -2, -1, 1
