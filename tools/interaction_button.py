@@ -68,7 +68,7 @@ furnitureType["Table 1"] = FurnitureType(type_id="table-1", name="Table 1",
                                  img_path="/store/users/saagardp/table1.jpg", 
                                  obj_path="/store/users/saagardp/table1.obj",
                                  mtl_path="/store/users/saagardp/table1.mtl",
-                                 scale=0.01,
+                                 scale=0.007,
                                  description="Add a touch of rustic elegance to your home with this beautifully crafted wooden table. Featuring a distressed wooden surface and sturdy black legs, this table combines durability with vintage charm. Perfect for both dining and decorative purposes, its timeless design fits seamlessly into modern, farmhouse, or industrial decor. A statement piece for any room, designed to bring warmth and character to your space.",
                                  desc_title="Rustic Charm Wooden Table",                                 
                                  )
@@ -95,7 +95,8 @@ def spawn_obj(obj_name):
     obj_count = obj.count
     object_id = f"{obj.type_id}-{obj.count}"
 
-    grabObj = GrabObject(obj_id=object_id, obj_type=obj, main_pos=main_pos, main_rot=main_rot)
+    grabObj = GrabObject(obj_id=object_id, obj_type=obj, main_pos=main_pos, main_rot=main_rot, 
+                         orig_scale=(obj.scale, obj.scale, obj.scale), grabbed_scale=(obj.scale*1.1, obj.scale*1.1, obj.scale*1.1))
     scene_obj = ObjModel(
         object_id=object_id,
         parent="main",
