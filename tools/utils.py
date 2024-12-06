@@ -14,7 +14,7 @@ class FurnitureType:
         self.count = 0
 
 class GrabObject:
-    def __init__(self, obj_id, obj_type, main_pos, main_rot, arena_obj=None):
+    def __init__(self, obj_id, obj_type, main_pos, main_rot, orig_scale=(1, 1, 1), grabbed_scale=(1.1, 1.1, 1.1), arena_obj=None):
         self.obj_id = obj_id
         self.arena_obj = arena_obj
         self.obj_type = obj_type
@@ -23,8 +23,8 @@ class GrabObject:
         self.grabbing = False
         self.grabber = None
         self.child_pose_relative_to_parent = None
-        self.orig_scale = (1, 1, 1)
-        self.grabbed_scale = (1.1, 1.1, 1.1)
+        self.orig_scale = orig_scale
+        self.grabbed_scale = grabbed_scale
 
     def box_click(self, scene, evt, msg):
 
