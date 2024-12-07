@@ -2,12 +2,43 @@ from arena import *
 from dotenv import load_dotenv
 from utils import *
 import os
+import sys
 
 load_dotenv()
 
 scene = Scene(host="arenaxr.org", namespace=os.getenv("NAMESPACE"), scene=os.getenv("SCENE_NAME"))
 prompt = None
 my_iso=None
+USE_SPLAT = True
+print("Use splat:", USE_SPLAT)
+
+poses = {
+    "splat": {
+        "main": {
+            "position": Position(-3.044, 0, 0.731), 
+            "rotation": (0, 0.99864, 0, 0.05213), 
+            "scale": (1, 1, 1)
+            },
+        "buttonPanel" : {
+            "position": Position(-4.4, 1.163, 0.748)
+            }
+        },
+    "scan": {
+        "main": {
+            "position": Position(-0.131, 0.116, -0.166), 
+            "rotation": (0, -0.704, 0, 0.71), 
+            "scale": (1, 1, 1)
+            },
+        "buttonPanel" : {
+            "position": Position(-3, 1.163, -2.148)
+            }
+        }
+}
+
+if USE_SPLAT:
+    global_pose = poses["splat"]
+else:
+    global_pose = poses["scan"]
 
 def noop_handler(_scene, _evt, _msg):
     """A no-operation handler that does nothing."""
@@ -351,7 +382,7 @@ def setup_scene():
         buttons=first_buttonset,
         vertical=True,
         font="Roboto-Mono",
-        position=Position(-3.4, 1.163, -2.748),
+        position=global_pose["buttonPanel"]["position"],
         ###4, 0.5, -4.5
         parent="main",
         evt_handler=button_handler,
@@ -359,6 +390,31 @@ def setup_scene():
     )
     scene.add_object(button_panel)
     print("Obj added")
+
+
+@scene.run_once
+def setup_room_scan():
+
+    try:
+        main = scene.get_persisted_obj("main")
+        # try:
+        #     splat = scene.get_persisted_obj("cylab_splat")
+        #     scene.update_object(splat, visible=USE_SPLAT)
+        #     scan = scene.get_persisted_obj("cylab")
+        #     scene.update_object(scan, visible=not USE_SPLAT)
+        # except:
+        #     print("Room not found")
+
+        main.update_attributes(
+            position=global_pose["main"]["position"],
+            rotation=global_pose["main"]["rotation"],
+            scale=global_pose["main"]["scale"],
+        )
+        scene.update_object(main)
+        print("Room pose updated")
+
+    except:
+        print("Main not found")
 
 scene.run_tasks()
 
