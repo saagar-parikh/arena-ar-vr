@@ -1,6 +1,8 @@
 # ARENA AR VR Interaction
 
 Mixed Reality interaction between AR and VR users
+Any room can be scanned and added to the arena scene. Run the scripts below for interaction.
+
 * [ARENA](arenaxr.org)
 
 ### Step 1
