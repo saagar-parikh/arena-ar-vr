@@ -21,5 +21,5 @@ Add objects to the arena in one of the scenes. There is also a script that adds 
 Run mesh_icp.py to localize the virtual objects with physical objects.
 
 ### Step 5
-Run interaction_button.py to include different buttons, display and way of interactions. 
+Run tools/interaction_button.py to include different buttons, display and way of interactions. 
 
